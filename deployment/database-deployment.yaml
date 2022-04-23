@@ -1,0 +1,51 @@
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fineline-database
+  labels:
+    app: fineline
+    type: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fineline
+      type: database-pod
+  template:
+    metadata:
+      labels:
+        app: fineline
+        type: database-pod
+    spec:
+      containers:
+      - name: fineline-database
+        image: mysql
+        ports:
+        - containerPort: 3306
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: "sreerAM31@&"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: fineline-database-service
+  labels:
+    app: fineline
+spec:
+  type: ClusterIP
+  selector:
+    app: fineline
+    type: database-pod
+  ports:
+  - port: 3306
+    targetPort: 3306
